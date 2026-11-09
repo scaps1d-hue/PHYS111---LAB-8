@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui}[hidden]{display:none!important}*{box-sizing:border-box}img{max-width:100%}</style>
+<title>LAB 8 · Virtual Lab · Work &amp; Energy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: instrument bench — large track canvas on the left, gauges column on the right, worksheet tools below */
+:root{
+  --bg:#eef2f5; --panel:#ffffff; --panel2:#f6f8fa; --ink:#14202b; --muted:#5b6b78; --line:#d5dde4;
+  --grid:#e2e9ef; --grid2:#c9d4dd; --track:#2c3a47; --cart:#e08a00; --pe:#2f6fd6; --ke:#1d9a6c; --me:#7a4bd1;
+  --accent:#0f6e8c; --accent-ink:#ffffff; --warn:#c2410c; --ok:#15803d;
+  --sky1:#7cc8f8; --sky2:#e6f6ff; --hill1:#8fdc8f; --hill2:#3f9d5a; --rail:#e11d48; --tie:#6b4532; --post:#94a3b8; --skygrid:rgba(255,255,255,.55); --cloud:rgba(255,255,255,.9); --tape:#ffd54a; --tapeink:#2a2100; --ban1:#e11d48; --ban2:#ff8a3d; --go:#16a34a; --step:#f59e0b;
+  --shadow:0 1px 2px rgba(20,32,43,.06),0 8px 24px -12px rgba(20,32,43,.18); --dot:rgba(20,32,43,.07); --sun:#ffd23f; --hillfar:#b7e4c7;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f151b; --panel:#17212a; --panel2:#1c2731; --ink:#e4ebf1; --muted:#93a3b1; --line:#2a3743;
+  --grid:#1f2a34; --grid2:#2e3c49; --track:#c9d6e2; --cart:#ffae2b; --pe:#6aa1ff; --ke:#41c995; --me:#a98bff;
+  --accent:#38b2d6; --accent-ink:#0b1217; --warn:#fb923c; --ok:#4ade80; --sky1:#0a1633; --sky2:#26386a; --hill1:#1e6b45; --hill2:#0f3a26; --rail:#ff4d6d; --tie:#a57c63; --post:#475569; --skygrid:rgba(255,255,255,.07); --cloud:rgba(255,255,255,.07); --tape:#d4a92a; --tapeink:#1a1400; --ban1:#be123c; --ban2:#ea580c; --go:#22c55e; --step:#fbbf24; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6); --dot:rgba(255,255,255,.05); --sun:#f1f5f9; --hillfar:#1b3b4a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --panel:#17212a; --panel2:#1c2731; --ink:#e4ebf1; --muted:#93a3b1; --line:#2a3743;
+  --grid:#1f2a34; --grid2:#2e3c49; --track:#c9d6e2; --cart:#ffae2b; --pe:#6aa1ff; --ke:#41c995; --me:#a98bff;
+  --accent:#38b2d6; --accent-ink:#0b1217; --warn:#fb923c; --ok:#4ade80; --sky1:#0a1633; --sky2:#26386a; --hill1:#1e6b45; --hill2:#0f3a26; --rail:#ff4d6d; --tie:#a57c63; --post:#475569; --skygrid:rgba(255,255,255,.07); --cloud:rgba(255,255,255,.07); --tape:#d4a92a; --tapeink:#1a1400; --ban1:#be123c; --ban2:#ea580c; --go:#22c55e; --step:#fbbf24; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6); --dot:rgba(255,255,255,.05); --sun:#f1f5f9; --hillfar:#1b3b4a; color-scheme:dark}
+html,body{background:var(--bg)}
+body{background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:22px 22px}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;padding:20px 22px;border-radius:16px;color:#fff;background:linear-gradient(115deg,var(--ban1),var(--ban2));position:relative;overflow:hidden}
+header{padding:24px 26px 22px;border-radius:20px;box-shadow:var(--shadow)}
+header .deco{position:absolute;right:0;bottom:0;width:min(46%,420px);height:100%;pointer-events:none;opacity:.35}
+header>div,header>.hstats{position:relative;z-index:1}
+.hstats{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.chip{font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.2);color:#fff;white-space:nowrap}
+header .eyebrow{color:rgba(255,255,255,.85)} header .sub{font-size:15px;opacity:.92;margin-top:4px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,4.6vw,48px);line-height:1;margin:6px 0 0;text-wrap:balance;letter-spacing:-.025em}
+.badge{font-family:var(--f-mono);font-size:12px;padding:5px 12px;border:1px solid rgba(255,255,255,.7);color:#fff;background:rgba(0,0,0,.15);border-radius:999px;white-space:nowrap;position:relative;z-index:1}
+h2{font-family:var(--f-display);font-weight:800;font-size:18px;margin:0;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+.ic{width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;flex:none;color:#fff}
+.ic svg{width:16px;height:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0;box-shadow:var(--shadow)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px}
+@media (max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}}
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:900px) and (min-width:560px){.side{display:grid;grid-template-columns:1fr 1fr}}
+canvas{display:block;width:100%;touch-action:none}
+#track{border-radius:12px;cursor:crosshair;margin-top:10px}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;padding:12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line)}
+.group{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.glabel{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);width:100%}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;font-size:13px;display:flex;align-items:center;gap:6px}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+.seg svg{width:16px;height:16px}
+button,select,input{font:inherit;font-size:14px;color:var(--ink)}
+button{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 16px;cursor:pointer;font-weight:700;transition:transform .08s,border-color .15s}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--go);color:#fff;border-color:var(--go);min-width:96px;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+button.stepb{background:var(--step);border-color:var(--step);color:#1f1300;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+button.primary:active,button.stepb:active{transform:translateY(2px);box-shadow:none}
+.swatches{display:flex;gap:6px}.swatch{width:26px;height:26px;border-radius:50%;padding:0;border:3px solid var(--panel);box-shadow:0 0 0 1px var(--line);cursor:pointer}.swatch[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}
+.bar .fill{border-radius:4px 4px 0 0;transition:height .08s linear}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select,input[type=number]{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+input[type=number]{width:84px;font-family:var(--f-mono)}
+label.ctl{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.sep{width:1px;height:26px;background:var(--line)}
+.params{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+.params label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.gauge-title{display:flex;justify-content:space-between;align-items:baseline}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.bars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;height:170px;margin-top:10px}
+.bar{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.bar .tube{flex:1;width:52px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;position:relative;overflow:hidden}
+.split{margin-top:14px}.split .track{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
+.split .track div{transition:width .08s linear}
+.split .lab{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;margin-top:5px}
+.bar .fill{position:absolute;left:0;right:0;bottom:0;height:0}
+.bar .val{font-family:var(--f-mono);font-size:12px}
+.bar .nm{font-family:var(--f-display);font-weight:700;font-size:15px}
+.readout{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14px;margin-top:8px}
+.readout dt{color:var(--muted)} .readout dd{margin:0;text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.tbl-wrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+tbody tr:nth-child(even){background:var(--panel2)}
+tbody tr.here{background:color-mix(in srgb,var(--rail) 14%,transparent)}
+tbody tr.here td.pt{color:var(--rail)}
+th{font-family:var(--f-body);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--line)}
+td:first-child,th:first-child{text-align:left}
+td{font-family:var(--f-mono);font-size:13px}
+td.pt{font-family:var(--f-display);font-weight:700;font-size:15px}
+.row-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.work{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.result{margin-top:12px;padding:12px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);font-family:var(--f-mono);font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.pos{color:var(--ok);font-weight:600} .neg{color:var(--warn);font-weight:600}
+ol.tasks{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:t}
+ol.tasks li{counter-increment:t;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);font-size:14px}
+ol.tasks li::before{content:counter(t);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--ban1),var(--ban2));color:#fff;font-weight:800;font-family:var(--f-display);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:6px}
+.sw{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.status{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+
+.pgwrap{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:10px}
+.pgcard{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel2)}
+.pghead{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-family:var(--f-display)}
+.pgtag{font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:999px;color:#fff}
+.lcd{font-family:var(--f-mono);font-size:22px;font-weight:600;letter-spacing:.02em;background:#0e1a12;color:#7dff9b;border-radius:8px;padding:6px 10px;margin-top:6px;text-shadow:0 0 8px rgba(125,255,155,.45);display:flex;justify-content:space-between;align-items:baseline;font-variant-numeric:tabular-nums}
+.lcd small{font-size:11px;color:#9fdcae}
+.pgmeta{font-size:12px;color:var(--muted);font-family:var(--f-mono);margin-top:4px}
+.check{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.check input{width:90px}
+.check button{padding:5px 10px;font-size:13px}
+.verdict{font-size:13px;font-weight:700}
+.toast{position:absolute;left:50%;top:22px;transform:translate(-50%,-8px);opacity:0;pointer-events:none;background:var(--ink);color:var(--panel);padding:8px 14px;border-radius:999px;font-weight:700;font-size:13px;transition:opacity .25s,transform .25s;white-space:nowrap;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.cv-wrap{position:relative}
+.chal{margin-top:22px;padding-top:16px;border-top:1px dashed var(--line)}
+.score{font-family:var(--f-display);font-weight:800;font-size:18px;padding:4px 14px;border-radius:999px;background:var(--panel2);border:1px solid var(--line)}
+.ctab input{width:96px;font-family:var(--f-mono);font-size:13px;text-align:right;padding:5px 7px;border-radius:7px;border:1.5px solid var(--line);background:var(--panel)}
+.ctab input.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--panel))}
+.ctab input.bad{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,var(--panel))}
+.ctab .given{font-weight:700;color:var(--ink)} .ctab .given small{display:block;font-family:var(--f-body);font-size:10px;color:var(--me);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.ctab .sol{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.ctab td.pt small{display:block;font-family:var(--f-body);font-size:10px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.05em}
+.mecard{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 20px;margin-top:12px;padding:14px 16px;border-radius:14px;color:#fff;background:linear-gradient(120deg,var(--me),color-mix(in srgb,var(--me) 55%,var(--pe)))}
+.mel{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.mev{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,36px);line-height:1.1;font-variant-numeric:tabular-nums}
+.mefacts{display:flex;flex-wrap:wrap;gap:6px}.mefacts span{font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.2)}
+.t1 input{width:92px;font-family:var(--f-mono);font-size:13px;text-align:right;padding:5px 7px;border-radius:7px;border:1.5px solid var(--line);background:var(--panel)}
+.t1 input.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--panel))}
+.t1 input.bad{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,var(--panel))}
+.t1 .sol{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.t1 td.me{color:var(--me);font-weight:700}
+@media (max-width:640px){header .deco{display:none}.hstats{align-items:flex-start}.chips{justify-content:flex-start}.badge{white-space:normal}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">PHYS 111 · Lab I · LAB 8</div>
+      <h1>Work &amp; Energy Coaster Lab</h1>
+      <div class="sub">Build your own coaster. Energy only changes form: PE ⇄ KE.</div>
+    </div>
+    <div class="hstats">
+      <div class="chips"><span class="chip" id="chipM">m = 15.0 kg</span><span class="chip" id="chipB">1 block = 4.50 m</span><span class="chip" id="chipG">g = 9.80 m/s²</span></div>
+      <span class="badge" id="meBadge">Frictionless · ME conserved · drift 0.000 %</span>
+    </div>
+    <svg class="deco" viewBox="0 0 400 140" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C60 40 70 120 120 120 S180 30 220 30 S270 125 310 125 S370 60 400 60" fill="none" stroke="#fff" stroke-width="6"/><path d="M0 48 C60 48 70 128 120 128 S180 38 220 38 S270 133 310 133 S370 68 400 68" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="2 8"/></svg>
+  </header>
+
+  <section class="bench">
+    <div class="panel">
+      <div class="row-head">
+        <h2><span class="ic" style="background:var(--rail)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 17c4 0 4-10 8-10s4 10 8 10 3-6 4-6"/></svg></span>Track</h2>
+        <span class="status" id="status">Paused · cart at A</span>
+      </div>
+      <div class="cv-wrap"><div class="toast" id="toast" role="status"></div><canvas id="track" aria-label="Roller coaster track with draggable points A to H, height ruler, level line and speed probe"></canvas></div>
+      <p class="hint">Drag the white circles <b>A–H</b> to reshape the track. Hover over the track to read the height at any point, or tap the track to move the <b>◆ height probe</b> there. Drag the <b>▶ level line</b> on the ruler to compare heights.</p>
+      <div class="controls">
+        <button class="primary" id="btnRun">Start</button>
+        <button id="btnStep" class="stepb">Step</button>
+        <button id="btnReset">Reset</button>
+        <label class="ctl" for="selRate">Playback
+          <select id="selRate">
+            <option value="0.25">0.25×</option>
+            <option value="0.5" selected>0.5×</option>
+            <option value="1">1×</option>
+            <option value="2">2×</option>
+          </select></label>
+      </div>
+      <div class="toolbar">
+        <div class="group"><span class="glabel">Rider</span>
+          <div class="seg" id="segVeh" role="group" aria-label="Rider"><button type="button" data-veh="car" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 15l1-6h14l3 3v3z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>Car</button><button type="button" data-veh="ball" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>Ball</button><button type="button" data-veh="box" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="6" width="14" height="12" rx="2"/></svg>Block</button><button type="button" data-veh="sled" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 17h15a3 3 0 0 0 3-3M6 13h11M8 13v4M15 13v4"/></svg>Sled</button><button type="button" data-veh="penguin" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="11" cy="14" rx="8" ry="5"/><circle cx="18" cy="10" r="3.5"/></svg>Penguin</button><button type="button" data-veh="skate" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 17h18"/><circle cx="7" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/><path d="M12 14V7"/><circle cx="12" cy="4.5" r="2"/></svg>Skater</button><button type="button" data-veh="rocket" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9h11c4 0 6 3 6 3s-2 3-6 3H4z"/><path d="M4 9 1 6v12l3-3z"/></svg>Rocket</button><button type="button" data-veh="mine" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8h18l-3 9H6z"/><circle cx="8" cy="19.5" r="2"/><circle cx="16" cy="19.5" r="2"/></svg>Mine cart</button></div>
+          <div class="swatches" id="swatches" role="group" aria-label="Rider colour"></div>
+        </div>
+        <div class="group"><span class="glabel">Track</span>
+          <label class="ctl" for="selPreset"><select id="selPreset">
+            <option value="bumps">Handout (Bumps)</option>
+            <option value="ramp">Ramp</option>
+            <option value="valley">Valley</option>
+            <option value="tall">Hill too high</option>
+          </select></label>
+          <label class="ctl" for="selSnap">Snap <select id="selSnap">
+            <option value="0">Off</option>
+            <option value="0.25">¼ block</option>
+            <option value="0.5" selected>½ block</option>
+            <option value="1">1 block</option>
+          </select></label>
+        </div>
+        <div class="group"><span class="glabel">Show</span>
+          <label class="ctl" for="chkVec"><input type="checkbox" id="chkVec" checked> Velocity vector</label>
+          <label class="ctl" for="chkTrail"><input type="checkbox" id="chkTrail" checked> Speed trail</label>
+        </div>
+      </div>
+      <div class="params">
+        <label for="inM">Mass of cart (kg)<input type="number" id="inM" value="15.0" step="0.5" min="0.1"></label>
+        <label for="inBlock">Height of each block (m)<input type="number" id="inBlock" value="4.50" step="0.1" min="0.1"></label>
+        <label for="inG">g (m/s²)<input type="number" id="inG" value="9.80" step="0.01" min="0.1"></label>
+        <label for="inV0">Initial speed at A (m/s)<input type="number" id="inV0" value="0" step="0.5" min="0"></label>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <div class="gauge-title"><h2><span class="ic" style="background:var(--go)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/></svg></span>Speedometer</h2><span class="status">cart</span></div>
+        <canvas id="gauge" aria-label="Speedometer"></canvas>
+      </div>
+      <div class="panel">
+        <div class="gauge-title"><h2><span class="ic" style="background:var(--me)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>Energy of the cart</h2><span class="status">joules</span></div>
+        <div class="bars">
+          <div class="bar"><div class="tube"><div class="fill" id="fPE" style="background:linear-gradient(180deg,#8bb8ff,var(--pe))"></div></div><div class="val" id="vPE">0</div><div class="nm" style="color:var(--pe)">PE</div></div>
+          <div class="bar"><div class="tube"><div class="fill" id="fKE" style="background:linear-gradient(180deg,#7ee2b5,var(--ke))"></div></div><div class="val" id="vKE">0</div><div class="nm" style="color:var(--ke)">KE</div></div>
+          <div class="bar"><div class="tube"><div class="fill" id="fME" style="background:linear-gradient(180deg,#c6b0ff,var(--me))"></div></div><div class="val" id="vME">0</div><div class="nm" style="color:var(--me)">ME</div></div>
+        </div>
+        <div class="split"><div class="track"><div id="sPE" style="background:var(--pe);width:100%"></div><div id="sKE" style="background:var(--ke);width:0"></div></div>
+          <div class="lab"><span style="color:var(--pe)" id="lPE">PE 100%</span><span style="color:var(--ke)" id="lKE">KE 0%</span></div></div>
+      </div>
+      <div class="panel">
+        <div class="gauge-title"><h2><span class="ic" style="background:var(--warn)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l7 10-7 10-7-10z"/></svg></span>Height probe</h2></div>
+        <dl class="readout" id="probeOut"></dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="row-head"><h2><span class="ic" style="background:var(--pe)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 20h18M5 16l5-6 4 3 6-8"/></svg></span>Energy along the track</h2>
+      <div class="legend"><span><i class="sw" style="background:linear-gradient(180deg,#8bb8ff,var(--pe))"></i>PE = mgh</span><span><i class="sw" style="background:linear-gradient(180deg,#7ee2b5,var(--ke))"></i>KE = ½mv²</span><span><i class="sw" style="background:linear-gradient(180deg,#c6b0ff,var(--me))"></i>ME = PE + KE</span></div>
+    </div>
+    <canvas id="egraph" aria-label="Energy versus horizontal position"></canvas>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <div class="row-head"><h2><span class="ic" style="background:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg></span>Point data (Table, Q7)</h2>
+        <span class="score" id="t1Score">Score — / —</span></div>
+      <div class="mecard">
+        <div><div class="mel">Total mechanical energy (same at every point)</div><div class="mev" id="t1ME">5,292 J</div></div>
+        <div class="mefacts" id="t1Facts"></div>
+      </div>
+      <p class="hint">Heights come from the track. Find P.E = mgh, then K.E = M.E − P.E, then the speed v = √(2·K.E / m). Answers within 2% count as correct.</p>
+      <div class="controls">
+        <button class="primary" id="btnT1Chk" type="button">Check table</button>
+        <button id="btnT1Show" type="button">Show solutions</button>
+        <button id="btnT1Clr" type="button">Clear</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Point</th><th>Height (blocks)</th><th>Height h (m)</th><th>M.E (J)</th><th>P.E (J)</th><th>K.E (J)</th><th>Velocity v (m/s)</th></tr></thead>
+        <tbody id="ptBody" class="t1"></tbody></table></div>
+      <div class="chal">
+        <div class="row-head"><h2><span class="ic" style="background:linear-gradient(135deg,var(--ban1),var(--ban2))"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg></span>Energy challenge</h2>
+          <span class="score" id="chScore">Score — / —</span></div>
+        <p class="hint">Each mystery point <b>P1–P5</b> gives you one value. Each one also carries a <b>different mass</b>, released from A like the main cart. Use conservation of energy with g and the start height at A to find the rest. Does the mass change v or h? Rows marked <b>find the spot</b> give only the speed. Work out the height, then the point appears on the track once you have it right. Answers within 2% count as correct.</p>
+        <div class="controls">
+          <button class="primary" id="btnChk" type="button">Check answers</button>
+          <button id="btnNew" type="button">New challenge</button>
+          <button id="btnShow" type="button">Show solutions</button>
+        </div>
+        <div class="tbl-wrap"><table class="ctab">
+          <thead><tr><th>Point</th><th>Mass (kg)</th><th>h (m)</th><th>v (m/s)</th><th>K.E (J)</th><th>P.E (J)</th><th>M.E (J)</th></tr></thead>
+          <tbody id="chBody"></tbody></table></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2><span class="ic" style="background:var(--ke)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v14M6 11l6 6 6-6M5 21h14"/></svg></span>Work done by gravity (Q10–Q11)</h2>
+      <div class="work">
+        <label class="ctl" for="wFrom">From <select id="wFrom"></select></label>
+        <label class="ctl" for="wTo">to <select id="wTo"></select></label>
+      </div>
+      <div class="result" id="wOut"></div>
+      <h2 style="margin-top:20px"><span class="ic" style="background:var(--ban2)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 2h2v20H5zM8 3h11l-3 4 3 4H8z"/></svg></span>Your missions</h2>
+      <ol class="tasks">
+        <li><span>Load the handout track. Does the cart reach H? Compare the ME at A with the PE at H.</span></li>
+        <li><span>Use Table 1 to find the speeds at D, F and C. Compare them and explain using ½mv² = mg(h<sub>A</sub> − h).</span></li>
+        <li><span>Use the level line to set G at the same height as E. Confirm that v<sub>E</sub> = v<sub>G</sub>.</span></li>
+        <li><span>Drag E up and down. Does the speed at F change? Why not?</span></li>
+        <li><span>Find the point where PE = KE: h = ½(h<sub>A</sub> + v<sub>0</sub>²/2g).</span></li>
+        <li><span>Raise C above A and run. Where does the cart turn back?</span></li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<script>(()=>{const P=CanvasRenderingContext2D.prototype,a=P.arc;P.arc=function(x,y,r,...o){return a.call(this,x,y,Math.max(0,r||0),...o)};})();</script>
+<script>
+(()=>{
+const LET="ABCDEFGH", XMAX=16, YMAX=9.5;
+const PRESETS={
+  bumps:{x:[1.5,4,7,8.5,10,12,14,15.5],y:[8,5,6,0,6,5,2,8]},
+  ramp:{x:[1,2.5,4,5.5,7.5,10,12.5,15],y:[8,7,4.5,2,0.5,0,0,0.5]},
+  valley:{x:[1,3,5,7,9,11,13,15],y:[8,4,1.5,0,0,1.5,4,8]},
+  tall:{x:[1,3,5,7,9,11,13,15],y:[6,3,1,0,7.5,3,1,4]}
+};
+try{window.opener=null;}catch(e){}
+const SV_KEY="phys111_lab8_vlab_student";
+const SV=(()=>{try{return JSON.parse(sessionStorage.getItem(SV_KEY)||"null");}catch(e){return null;}})();
+const MASSES=[10,12,14,15,16,18,20,22,24,25,28,30],BLOCKS=[3.0,3.5,4.0,4.5,5.0,5.5,6.0];
+const hashStr=(t)=>{let h=2166136261;for(const c of t){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
+const valuesFor=(id)=>({m:MASSES[hashStr(id)%MASSES.length],b:BLOCKS[hashStr("block|"+id)%BLOCKS.length]});
+if(SV&&SV.id){const v=valuesFor(SV.id);const want="#exam-m"+v.m+"-b"+v.b+"-ty8_5_6_0_6_5_2_8";
+  if(!/^#exam/.test(location.hash)){try{history.replaceState(null,"",location.pathname+location.search+want);}catch(e){location.hash=want.slice(1);}}}
+const EXAM=/^#exam/.test(location.hash);
+const $=id=>document.getElementById(id);const $q=$;
+let P=clone(PRESETS.bumps);
+function clone(p){return {x:p.x.slice(),y:p.y.slice()}}
+let level=6, probeX=8.5;
+let m=15,B=4.5,g=9.8,v0=0;
+let samples=null; // {X,Y,S,L}
+let sim={s:0,u:0,running:false,t:0,maxDrift:0};
+let snap=0.5, rate=0.5, showVec=true;
+
+/* ---------- monotone cubic track y(x) ---------- */
+function slopes(){
+  const n=8,h=[],d=[],mm=new Array(n);
+  for(let k=0;k<n-1;k++){h[k]=P.x[k+1]-P.x[k];d[k]=(P.y[k+1]-P.y[k])/h[k]}
+  mm[0]=d[0]; mm[n-1]=d[n-2];
+  for(let k=1;k<n-1;k++){
+    if(d[k-1]*d[k]<=0) mm[k]=0;
+    else{const w1=2*h[k]+h[k-1],w2=h[k]+2*h[k-1];mm[k]=(w1+w2)/(w1/d[k-1]+w2/d[k])}
+  }
+  return {h,mm};
+}
+function build(){
+  const {h,mm}=slopes(), N=2400, X=new Float64Array(N), Y=new Float64Array(N);
+  const x0=P.x[0], x1=P.x[7];
+  for(let i=0;i<N;i++){
+    const x=x0+(x1-x0)*i/(N-1); let k=0; while(k<6&&x>P.x[k+1])k++;
+    const t=(x-P.x[k])/h[k], t2=t*t,t3=t2*t;
+    Y[i]=(2*t3-3*t2+1)*P.y[k]+(t3-2*t2+t)*h[k]*mm[k]+(-2*t3+3*t2)*P.y[k+1]+(t3-t2)*h[k]*mm[k+1];
+    X[i]=x;
+  }
+  const S=new Float64Array(N);
+  for(let i=1;i<N;i++)S[i]=S[i-1]+Math.hypot(X[i]-X[i-1],Y[i]-Y[i-1])*B;
+  samples={X,Y,S,L:S[N-1],N};
+}
+function atS(s){ // returns x,y (blocks), sinθ
+  const {X,Y,S,N}=samples; s=Math.max(0,Math.min(samples.L,s));
+  let lo=0,hi=N-1; while(hi-lo>1){const md=(lo+hi)>>1; if(S[md]<=s)lo=md; else hi=md}
+  const f=(s-S[lo])/((S[hi]-S[lo])||1);
+  const dy=(Y[hi]-Y[lo])*B, ds=(S[hi]-S[lo])||1;
+  return {x:X[lo]+f*(X[hi]-X[lo]), y:Y[lo]+f*(Y[hi]-Y[lo]), sin:dy/ds, cos:((X[hi]-X[lo])*B)/ds};
+}
+function yAtX(x){
+  const {X,Y,N}=samples; if(x<=X[0])return Y[0]; if(x>=X[N-1])return Y[N-1];
+  const i=Math.min(N-2,Math.floor((x-X[0])/(X[N-1]-X[0])*(N-1))); const f=(x-X[i])/(X[i+1]-X[i]);
+  return Y[i]+f*(Y[i+1]-Y[i]);
+}
+function sAtX(x){
+  const {X,S,N}=samples; const i=Math.max(0,Math.min(N-2,Math.floor((x-X[0])/(X[N-1]-X[0])*(N-1))));
+  const f=Math.max(0,Math.min(1,(x-X[i])/(X[i+1]-X[i]))); return S[i]+f*(S[i+1]-S[i]);
+}
+/* ---------- energy ---------- */
+const hA=()=>P.y[0]*B;
+const E2=()=>v0*v0+2*g*hA();             // v² budget (m²/s²)
+const ME=()=>m*g*hA()+0.5*m*v0*v0;
+function vAtH(hm){const q=E2()-2*g*hm; return q>=-1e-9?Math.sqrt(Math.max(0,q)):NaN}
+
+/* ---------- simulation (energy-projected integrator) ---------- */
+function resetSim(){gateInfo=[{},{}];cross=[null,null];t12=null;sim.uPrev=0;trail=[];roll=0;sim.s=0;sim.u=v0;sim.t=0;sim.maxDrift=0;sim.running=false;$("btnRun").textContent="Start";}
+function advance(dt){
+  const sub=Math.max(1,Math.ceil(dt/0.0015)), h=dt/sub, L=samples.L;
+  const gs=gates.map(gateS);
+  for(let i=0;i<sub;i++){
+    const a=-g*atS(sim.s).sin, s0=sim.s, u0=sim.u;
+    sim.u+=a*h; sim.s+=sim.u*h;
+    const s1=sim.s, t0=sim.t+i*h;
+    if(s1!==s0)gs.forEach((sg,j)=>{
+      const tAt=b=>t0+h*(b-s0)/(s1-s0), lo=sg-LF/2, hi=sg+LF/2;
+      const inb0=s0>lo&&s0<hi, inb1=s1>lo&&s1<hi, gi=gateInfo[j];
+      if(!inb0&&inb1){gi.tIn=tAt(s1>s0?lo:hi)}
+      if(inb0&&!inb1&&gi.tIn!=null){const tOut=tAt(s1>s0?hi:lo);gi.last={dt:tOut-gi.tIn,v:Math.abs(u0),dir:s1>s0?"→":"←"};gi.n=(gi.n||0)+1;gi.tIn=null;flashGate=j}
+      if((s0-sg)*(s1-sg)<0){const tc=tAt(sg);cross[j]=tc;if(j===1&&cross[0]!=null&&tc>cross[0])t12={dt:tc-cross[0],d:Math.abs(gs[1]-gs[0])};}
+    });
+    if(sim.s<0){sim.s=-sim.s;sim.u=Math.abs(sim.u)}
+    if(sim.s>L){sim.s=2*L-sim.s;sim.u=-Math.abs(sim.u)}
+    const p=atS(sim.s), q=E2()-2*g*p.y*B;
+    const sp=Math.sqrt(Math.max(0,q)); sim.u=(sim.u>=0?1:-1)*sp;
+    const KE=0.5*m*sp*sp, PE=m*g*p.y*B, me=ME();
+    sim.maxDrift=Math.max(sim.maxDrift,Math.abs(KE+PE-me)/(me||1)*100);
+  }
+  const before=sim.uPrev||0; if(before*sim.u<0||(Math.abs(sim.u)<0.02&&Math.abs(before)>0.02)){const p2=atS(sim.s);if(p2.x>P.x[0]+0.3&&p2.x<P.x[7]-0.01||p2.x>=P.x[7]-0.01)toast(`Turning point at h = ${(p2.y*B).toFixed(2)} m · v = 0 · all PE`)}
+  sim.uPrev=sim.u;
+  sim.t+=dt; cloudOff+=dt*0.004;
+  const q=atS(sim.s);roll+=sim.u*dt*((W-M.l-M.r)/XMAX/B)/12;
+  trail.push({x:q.x,y:q.y,v:Math.abs(sim.u)});if(trail.length>70)trail.shift();
+}
+
+/* ---------- canvases ---------- */
+const cv=$("track"),cx=cv.getContext("2d"), gv=$("gauge"),gx=gv.getContext("2d"), ev=$("egraph"),ex=ev.getContext("2d");
+let W=0,H=0,dpr=1; const M={l:68,r:18,t:16,b:30};
+let gw=0,gh=0,ew=0,eh=0;
+function size(){
+  dpr=window.devicePixelRatio||1;
+  W=cv.clientWidth; H=Math.max(280,Math.round(W*0.6)); cv.style.height=H+"px"; cv.width=W*dpr; cv.height=H*dpr;
+  gw=gv.clientWidth; gh=Math.round(Math.min(gw*0.86,240)); gv.style.height=gh+"px"; gv.width=gw*dpr; gv.height=gh*dpr;
+  ew=ev.clientWidth; eh=Math.max(170,Math.round(ew*0.22)); ev.style.height=eh+"px"; ev.width=ew*dpr; ev.height=eh*dpr;
+  M.l=W<480?40:84;
+}
+const sx=x=>M.l+x/XMAX*(W-M.l-M.r), sy=y=>H-M.b-y/YMAX*(H-M.t-M.b);
+const wx=px=>(px-M.l)/(W-M.l-M.r)*XMAX, wy=py=>(H-M.b-py)/(H-M.t-M.b)*YMAX;
+let C={};
+function readColors(){const cs=getComputedStyle(document.documentElement);["bg","panel","panel2","ink","muted","line","grid","grid2","track","cart","pe","ke","me","accent","warn","ok","sky1","sky2","hill1","hill2","rail","tie","post","skygrid","cloud","tape","tapeink","sun","hillfar"].forEach(k=>C[k]=cs.getPropertyValue("--"+k).trim())}
+const FM=()=>getComputedStyle(document.documentElement).getPropertyValue("--f-mono");
+const FD=()=>getComputedStyle(document.documentElement).getPropertyValue("--f-display");
+
+const COLORS=["#ff3b6b","#ffb000","#00b8d9","#7c4dff","#22c55e","#ff6d00"];
+let showPtV=false, hoverX=null;
+const GCOL=["#ff3b6b","#00b8d9"];
+let flashGate=-1;
+let gates=[], LF=0.5, gateInfo=[{},{}], cross=[null,null], t12=null, toastT=0, cloudOff=0;
+function gateS(gt){return sAtX(gt.x)}
+function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),1600)}
+let faceDir=1;
+let vehicle="car", cartColor=COLORS[0], showTrail=true, trail=[], roll=0;
+const clouds=[[0.12,0.12,1],[0.42,0.07,0.8],[0.7,0.16,1.15],[0.9,0.06,0.7]];
+function shade(hex,f){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const t=f<0?0:255,p=Math.abs(f);r=Math.round((t-r)*p+r);g=Math.round((t-g)*p+g);b=Math.round((t-b)*p+b);return `rgb(${r},${g},${b})`}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function drawTrack(){
+  const c=cx; c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,W,H);
+  const PL=M.l,PT=M.t,PW=W-M.l-M.r,PH=sy(0)-M.t;
+  c.save();rr(c,PL,PT,PW,PH,10);c.clip();
+  const sk=c.createLinearGradient(0,PT,0,sy(0));sk.addColorStop(0,C.sky1);sk.addColorStop(1,C.sky2);c.fillStyle=sk;c.fillRect(PL,PT,PW,PH);
+  // sun or moon + stars
+  const dark=C.sky1.toLowerCase()==="#0a1633";
+  if(dark){c.fillStyle="rgba(255,255,255,.7)";for(let i=0;i<60;i++){const x=PL+((i*97.3)%1)*0+((i*137.5)%PW),y=PT+((i*61.7)%(PH*.55));c.fillRect(x,y,i%7?1.2:2,i%7?1.2:2)}}
+  {const sxn=PL+PW*.8,syn=PT+PH*.2,r=W<480?16:24;const gl=c.createRadialGradient(sxn,syn,r*.5,sxn,syn,r*3.2);gl.addColorStop(0,dark?"rgba(241,245,249,.25)":"rgba(255,210,63,.55)");gl.addColorStop(1,"rgba(255,210,63,0)");c.fillStyle=gl;c.beginPath();c.arc(sxn,syn,r*3.2,0,7);c.fill();c.fillStyle=C.sun;c.beginPath();c.arc(sxn,syn,r,0,7);c.fill();if(dark){c.fillStyle=C.sky1;c.beginPath();c.arc(sxn+r*.45,syn-r*.25,r*.85,0,7);c.fill()}}
+  // far hills
+  c.fillStyle=C.hillfar;c.beginPath();c.moveTo(PL,sy(0));for(let i=0;i<=40;i++){const fx=i/40;c.lineTo(PL+fx*PW,sy(2.6+1.3*Math.sin(fx*9.4+1)+0.7*Math.sin(fx*23)))}c.lineTo(W-M.r,sy(0));c.closePath();c.globalAlpha=.8;c.fill();c.globalAlpha=1;
+  // clouds
+  c.fillStyle=C.cloud;clouds.forEach(([fx,fy,k])=>{const x=PL+(((fx+cloudOff*(0.6+k*.3))%1.15)-0.08)*PW,y=PT+fy*PH,r=14*k*(W<480?.7:1);c.beginPath();c.arc(x,y,r,0,7);c.arc(x+r*1.1,y-r*.4,r*1.2,0,7);c.arc(x+r*2.2,y,r*.95,0,7);c.rect(x,y,r*2.2,r*.9);c.fill()});
+  // grid (1 block)
+  c.lineWidth=1;c.strokeStyle=C.skygrid;
+  for(let x=0;x<=XMAX;x+=1){c.beginPath();c.moveTo(Math.round(sx(x))+.5,PT);c.lineTo(Math.round(sx(x))+.5,sy(0));c.stroke()}
+  for(let y=0;y<=9;y+=1){c.beginPath();c.moveTo(PL,Math.round(sy(y))+.5);c.lineTo(W-M.r,Math.round(sy(y))+.5);c.stroke()}
+  const {X,Y,N}=samples;
+  // landscape under the track
+  const hg=c.createLinearGradient(0,PT,0,sy(0));hg.addColorStop(0,C.hill1);hg.addColorStop(1,C.hill2);
+  c.globalAlpha=.55;c.fillStyle=hg;c.beginPath();c.moveTo(PL,sy(0));c.lineTo(PL,sy(Y[0]*0.35));
+  for(let i=0;i<N;i+=6)c.lineTo(sx(X[i]),sy(Y[i]*0.35));c.lineTo(W-M.r,sy(Y[N-1]*0.35));c.lineTo(W-M.r,sy(0));c.closePath();c.fill();c.globalAlpha=1;
+  // support scaffolding
+  c.strokeStyle=C.post;c.lineWidth=2;c.globalAlpha=.7;
+  for(let x=Math.ceil(P.x[0]);x<=P.x[7];x+=1){const y=yAtX(x);if(y<0.3)continue;
+    c.beginPath();c.moveTo(sx(x),sy(y)+5);c.lineTo(sx(x),sy(0));c.stroke();}
+  c.globalAlpha=1;
+  c.restore();
+  // ground line
+  c.strokeStyle=C.hill2;c.lineWidth=3;c.beginPath();c.moveTo(PL,sy(0));c.lineTo(W-M.r,sy(0));c.stroke();
+  // measuring tape (height scale)
+  const tw=W<480?30:56, tx0=M.l-tw-4;
+  c.fillStyle=C.tape;rr(c,tx0,M.t-6,tw,sy(0)-M.t+12,5);c.fill();
+  c.strokeStyle=C.tapeink;c.fillStyle=C.tapeink;c.lineWidth=1;
+  c.font=`700 ${W<480?9:10}px ${FM()}`;c.textAlign="left";c.textBaseline="middle";
+  for(let y=0;y<=9+1e-9;y+=0.25){
+    const yy=Math.round(sy(y))+.5, major=Math.abs(y-Math.round(y))<1e-9, half=Math.abs(y*2-Math.round(y*2))<1e-9;
+    c.beginPath();c.moveTo(tx0+tw,yy);c.lineTo(tx0+tw-(major?12:half?8:4),yy);c.stroke();
+    if(major){const mtxt=(y*B).toFixed(y*B%1?1:0);if(W<480){c.fillText(mtxt,tx0+3,yy)}else{c.save();c.globalAlpha=.6;c.fillText(String(Math.round(y)),tx0+3,yy);c.restore();c.fillText(mtxt,tx0+15,yy)}}
+  }
+  if(W>=480){c.save();c.translate(10,(M.t+sy(0))/2);c.rotate(-Math.PI/2);c.textAlign="center";c.fillStyle=C.muted;c.font=`600 11px ${FM()}`;c.fillText(`blocks · height h (m) · step: 1 block = ${B.toFixed(2)} m`,0,0);c.restore();}
+  else{c.fillStyle=C.muted;c.font=`600 9px ${FM()}`;c.textAlign="left";c.textBaseline="top";c.fillText("h(m)",0,0)}
+  {c.save();c.textAlign="center";c.textBaseline="top";c.fillStyle=C.tapeink;c.font=`700 ${W<480?8:10}px ${FM()}`;
+   const cx0=tx0+tw/2;c.fillText("step",cx0,sy(0)+9);c.fillText(B.toFixed(2)+" m",cx0,sy(0)+(W<480?18:21));c.restore();}
+  c.textAlign="center";c.textBaseline="top";c.fillStyle=C.muted;c.font=`11px ${FM()}`;
+  for(let x=0;x<=XMAX;x+=2)c.fillText((x*B).toFixed(0),sx(x),sy(0)+7);
+  c.textAlign="right";c.fillText("x (m)",W-M.r,Math.min(H-12,sy(0)+19));
+  // max height line
+  const hmax=E2()/(2*g)/B;
+  if(hmax<=YMAX){c.setLineDash([2,4]);c.strokeStyle=C.me;c.lineWidth=1.5;c.beginPath();c.moveTo(PL,sy(hmax));c.lineTo(W-M.r,sy(hmax));c.stroke();c.setLineDash([]);
+    c.fillStyle=C.me;c.textAlign="center";c.textBaseline="bottom";c.font=`700 11px ${FM()}`;c.fillText("max height reachable with this ME",(PL+W-M.r)/2,sy(hmax)-2)}
+  // level line
+  const ly=sy(level);
+  c.setLineDash([7,5]);c.strokeStyle=C.accent;c.lineWidth=2;c.beginPath();c.moveTo(PL,ly);c.lineTo(W-M.r,ly);c.stroke();c.setLineDash([]);
+  c.fillStyle=C.accent;c.beginPath();c.moveTo(M.l-2,ly);c.lineTo(M.l-14,ly-8);c.lineTo(M.l-14,ly+8);c.closePath();c.fill();
+  c.font=`700 11px ${FM()}`;c.textAlign="left";c.textBaseline="bottom";c.fillText(`level ${(level*B).toFixed(2)} m (${level.toFixed(2)} blocks)`,PL+8,ly-3);
+  // rails + ties
+  const pts=[];for(let i=0;i<N;i+=3){pts.push([sx(X[i]),sy(Y[i])])}pts.push([sx(X[N-1]),sy(Y[N-1])]);
+  const nrm=pts.map((p,i)=>{const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)];const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;return [-dy/l,dx/l]});
+  c.strokeStyle=C.tie;c.lineWidth=3;let acc=0;
+  for(let i=1;i<pts.length;i++){acc+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);if(acc>=11){acc=0;const [nx,ny]=nrm[i],p=pts[i];c.beginPath();c.moveTo(p[0]-nx*7,p[1]-ny*7);c.lineTo(p[0]+nx*3,p[1]+ny*3);c.stroke()}}
+  const rail=(off,w,col)=>{c.strokeStyle=col;c.lineWidth=w;c.lineJoin="round";c.lineCap="round";c.beginPath();pts.forEach((p,i)=>{const x=p[0]+nrm[i][0]*off,y=p[1]+nrm[i][1]*off;i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()};
+  rail(-5,3.5,C.rail);rail(1,4.5,C.rail);rail(0,1.2,"rgba(255,255,255,.55)");
+  // bumpers
+  [0,7].forEach(k=>{c.fillStyle=C.rail;rr(c,sx(P.x[k])-3,sy(P.y[k])-18,6,18,2);c.fill()});
+  // speed trail
+  const vmx=Math.sqrt(E2())||1;
+  if(showTrail&&trail.length>1){c.lineCap="round";for(let i=1;i<trail.length;i++){const f=Math.min(1,trail[i].v/vmx),al=i/trail.length;
+    c.strokeStyle=`hsla(${210-210*f},95%,55%,${al*0.9})`;c.lineWidth=3+7*al;c.beginPath();c.moveTo(sx(trail[i-1].x),sy(trail[i-1].y)-9);c.lineTo(sx(trail[i].x),sy(trail[i].y)-9);c.stroke()}}
+  // control points
+  const p=atS(sim.s);
+  for(let k=0;k<8;k++){
+    const px=sx(P.x[k]),py=sy(P.y[k]),r=W<480?11:14, on=Math.abs(p.x-P.x[k])<0.15, act=drag&&drag.k===k;
+    c.fillStyle=on?cartColor:act?C.accent:"rgba(255,255,255,.92)";c.strokeStyle=on?"#fff":"#14202b";c.lineWidth=2;
+    c.beginPath();c.arc(px,py,r,0,7);c.fill();c.stroke();
+    c.fillStyle=on||act?"#fff":"#14202b";c.font=`700 ${W<480?12:14}px ${FD()}`;c.textAlign="center";c.textBaseline="middle";c.fillText(LET[k],px,py+1);
+  }
+  // speed tags at each lettered point
+  if(showPtV){c.font=`700 ${W<480?9:11}px ${FM()}`;c.textBaseline="middle";c.textAlign="center";
+    for(let k=0;k<8;k++){const v=vAtH(P.y[k]*B),t=isNaN(v)?(W<560?"—":"not reached"):(W<560?v.toFixed(1):`v = ${v.toFixed(2)} m/s`),px=sx(P.x[k]),py=sy(P.y[k]),r=W<480?11:14;
+      const peak=k===0||k===7||P.y[k]>=(P.y[k-1]+P.y[k+1])/2;let ty=peak?py-r-14:py+r+14;if(ty>sy(0)-8)ty=py-r-14;if(ty<M.t+8)ty=py+r+14;
+      const w=c.measureText(t).width+12;const tx=Math.min(Math.max(px-w/2,PL+2),W-M.r-w-2);
+      c.fillStyle="rgba(20,32,43,.82)";rr(c,tx,ty-9,w,18,9);c.fill();c.fillStyle="#fff";c.fillText(t,tx+w/2,ty+.5)}}
+  // hover speed meter
+  if(hoverX!==null&&!drag&&!EXAM){const hy=yAtX(hoverX),hx=sx(hoverX),hyy=sy(hy),v=vAtH(hy*B);
+    c.strokeStyle=C.accent;c.lineWidth=2;c.fillStyle="#fff";c.beginPath();c.arc(hx,hyy,6,0,7);c.fill();c.stroke();
+    const t=`h = ${(hy*B).toFixed(2)} m`;c.font=`700 11px ${FM()}`;
+    const w=c.measureText(t).width+14;let tx=Math.min(Math.max(hx-w/2,PL+2),W-M.r-w-2),ty=hyy+14;if(ty+22>sy(0))ty=hyy-36;
+    c.fillStyle=C.accent;rr(c,tx,ty,w,22,11);c.fill();c.fillStyle="#fff";c.textAlign="left";c.textBaseline="middle";c.fillText(t,tx+7,ty+11)}
+  if(!EXAM){
+  // probe
+  const pyb=yAtX(probeX),ppx=sx(probeX),ppy=sy(pyb);
+  c.setLineDash([3,3]);c.strokeStyle=C.warn;c.lineWidth=1.4;c.beginPath();c.moveTo(ppx,ppy);c.lineTo(ppx,sy(0));c.stroke();
+  c.beginPath();c.moveTo(M.l-2,ppy);c.lineTo(ppx,ppy);c.stroke();c.setLineDash([]);
+  c.fillStyle=C.warn;c.strokeStyle="#fff";c.lineWidth=2;c.beginPath();c.moveTo(ppx,ppy-11);c.lineTo(ppx+9,ppy);c.lineTo(ppx,ppy+11);c.lineTo(ppx-9,ppy);c.closePath();c.fill();c.stroke();
+  //  const v=vAtH(pyb*B), lbl=`h ${(pyb*B).toFixed(2)} m · v ${isNaN(v)?"not reached":v.toFixed(2)+" m/s"}`;
+  //  c.font=`700 11px ${FM()}`;const tw2=c.measureText(lbl).width+14;let tx=Math.min(Math.max(ppx-tw2/2,PL+2),W-M.r-tw2-2),ty=ppy-38;if(ty<M.t+2)ty=ppy+16;
+  //  c.fillStyle=C.warn;rr(c,tx,ty,tw2,22,11);c.fill();
+  //  c.fillStyle="#fff";c.textAlign="left";c.textBaseline="middle";c.fillText(lbl,tx+7,ty+11);
+  }
+  // challenge points
+  if(!EXAM)chal.rows.forEach((r,i)=>{if(r.given==="v"&&!r.found)return;const x=sx(r.x),y=sy(yAtX(r.x));
+    c.save();c.translate(x,y);c.fillStyle=C.me;c.strokeStyle="#fff";c.lineWidth=2;c.beginPath();
+    for(let k=0;k<10;k++){const rad=k%2?5:12,a=-Math.PI/2+k*Math.PI/5;c.lineTo(Math.cos(a)*rad,Math.sin(a)*rad)}c.closePath();c.fill();c.stroke();
+    c.font=`800 11px ${FD()}`;c.textAlign="center";c.textBaseline="bottom";const t="P"+(i+1),w=c.measureText(t).width+10;
+    c.fillStyle=C.me;rr(c,-w/2,-32,w,17,8);c.fill();c.fillStyle="#fff";c.textBaseline="middle";c.fillText(t,0,-23.5);c.restore()});
+  // photogates
+  gates.forEach((gt,j)=>{const gx=sx(gt.x),gy=sy(yAtX(gt.x)),col=GCOL[j],fl=flashGate===j;
+    c.save();c.strokeStyle=col;c.lineWidth=4;c.lineCap="round";
+    c.beginPath();c.moveTo(gx-16,gy+18);c.lineTo(gx-16,gy-46);c.lineTo(gx+16,gy-46);c.lineTo(gx+16,gy+18);c.stroke();
+    c.strokeStyle=fl?"#fff":col;c.globalAlpha=fl?1:.7;c.lineWidth=fl?3:1.5;c.setLineDash([3,3]);c.beginPath();c.moveTo(gx-14,gy-16);c.lineTo(gx+14,gy-16);c.stroke();c.setLineDash([]);c.globalAlpha=1;
+    c.fillStyle=col;rr(c,gx-22,gy-70,44,22,6);c.fill();c.fillStyle="#fff";c.font=`800 12px ${FD()}`;c.textAlign="center";c.textBaseline="middle";c.fillText("PG"+(j+1),gx,gy-59);
+    const li=gateInfo[j].last;if(li){c.font=`700 11px ${FM()}`;const t=`Δt ${li.dt.toFixed(4)} s`,w=c.measureText(t).width+12;c.fillStyle="#0e1a12";rr(c,gx-w/2,gy-94,w,20,5);c.fill();c.fillStyle="#7dff9b";c.fillText(t,gx,gy-84)}
+    c.restore()});
+  if(flashGate>=0)setTimeout(()=>{flashGate=-1},120);
+  // rider
+  const cxp=sx(p.x), cyp=sy(p.y);
+  const dxp=sx(p.x+0.05)-sx(p.x), dyp=sy(yAtX(p.x+0.05))-sy(yAtX(p.x)); const th=Math.atan2(dyp,dxp);
+  drawRider(c,cxp,cyp,th);
+  if(showVec&&Math.abs(sim.u)>0.05){
+    const dir=sim.u>=0?1:-1, len=Math.min(110,Math.abs(sim.u)*4+10);
+    const ux=Math.cos(th)*dir, uy=Math.sin(th)*dir;
+    const ox=cxp+Math.sin(th)*26, oy=cyp-Math.cos(th)*26;
+    c.strokeStyle=C.ke;c.fillStyle=C.ke;c.lineWidth=3;c.lineCap="round";c.beginPath();c.moveTo(ox,oy);c.lineTo(ox+ux*len,oy+uy*len);c.stroke();
+    const hx=ox+ux*len,hy=oy+uy*len;c.beginPath();c.moveTo(hx+ux*3,hy+uy*3);c.lineTo(hx-ux*9-uy*6,hy-uy*9+ux*6);c.lineTo(hx-ux*9+uy*6,hy-uy*9-ux*6);c.closePath();c.fill();
+    c.font=`700 12px ${FM()}`;c.textAlign="left";c.textBaseline="bottom";c.fillText("v",hx+5,hy-3);
+  }
+}
+function drawRider(c,x,y,th){
+  const sc=W<480?.85:1.3, col=cartColor, dk=shade(col,-.35), lt=shade(col,.45);
+  if(Math.abs(sim.u)>0.05)faceDir=sim.u>=0?1:-1;
+  c.save();c.translate(x,y);c.rotate(th);c.scale(sc,sc);c.translate(0,-6);
+  const flip=["penguin","skate","rocket"].includes(vehicle);if(flip)c.scale(faceDir,1);
+  c.shadowColor="rgba(0,0,0,.25)";c.shadowBlur=6;c.shadowOffsetY=2;
+  if(vehicle==="car"){
+    const gr=c.createLinearGradient(0,-26,0,-4);gr.addColorStop(0,lt);gr.addColorStop(1,col);
+    c.fillStyle=gr;c.beginPath();c.moveTo(-20,-6);c.lineTo(-22,-20);c.quadraticCurveTo(-21,-25,-15,-24);c.lineTo(12,-24);c.quadraticCurveTo(22,-22,22,-12);c.lineTo(20,-6);c.closePath();c.fill();
+    c.shadowColor="transparent";c.strokeStyle=dk;c.lineWidth=1.5;c.stroke();
+    c.fillStyle="rgba(255,255,255,.85)";c.fillRect(-16,-17,26,3);
+    // riders' heads + safety bar
+    c.fillStyle="#2b2b2b";c.beginPath();c.arc(-9,-29,4.5,0,7);c.arc(5,-29,4.5,0,7);c.fill();
+    c.strokeStyle="#2b2b2b";c.lineWidth=2;c.beginPath();c.moveTo(-15,-24);c.lineTo(-13,-30);c.lineTo(14,-30);c.stroke();
+    c.fillStyle="#1f2937";[-12,12].forEach(w=>{c.beginPath();c.arc(w,-4,5,0,7);c.fill()});
+    c.fillStyle="#cbd5e1";[-12,12].forEach(w=>{c.beginPath();c.arc(w,-4,2,0,7);c.fill()});
+  }else if(vehicle==="ball"){
+    const r=12;const gr=c.createRadialGradient(-4,-r-4,2,0,-r,r);gr.addColorStop(0,lt);gr.addColorStop(1,col);
+    c.fillStyle=gr;c.beginPath();c.arc(0,-r+2,r,0,7);c.fill();c.shadowColor="transparent";
+    c.save();c.translate(0,-r+2);c.rotate(roll);c.strokeStyle="rgba(255,255,255,.9)";c.lineWidth=3;c.beginPath();c.arc(0,0,r-4,-.6,.6);c.stroke();c.beginPath();c.arc(0,0,r-4,Math.PI-.6,Math.PI+.6);c.stroke();c.restore();
+  }else if(vehicle==="box"){
+    const gr=c.createLinearGradient(0,-24,0,0);gr.addColorStop(0,lt);gr.addColorStop(1,col);
+    c.fillStyle=gr;rr(c,-14,-22,28,22,4);c.fill();c.shadowColor="transparent";c.strokeStyle=dk;c.lineWidth=2;c.stroke();
+    c.font=`700 10px ${FM()}`;c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.fillText(m.toFixed(0)+" kg",0,-11);
+  }else if(vehicle==="penguin"){
+    c.fillStyle="#1f2937";c.beginPath();c.ellipse(-2,-10,19,9,0,0,7);c.fill();c.shadowColor="transparent";
+    c.fillStyle="#f8fafc";c.beginPath();c.ellipse(0,-5,15,5,0,0,7);c.fill();
+    c.fillStyle="#1f2937";c.beginPath();c.arc(16,-14,8,0,7);c.fill();
+    c.fillStyle="#fff";c.beginPath();c.arc(19,-16,2.6,0,7);c.fill();c.fillStyle="#111";c.beginPath();c.arc(19.8,-16,1.3,0,7);c.fill();
+    c.fillStyle="#ff9f1c";c.beginPath();c.moveTo(23,-14);c.lineTo(30,-12);c.lineTo(23,-10);c.closePath();c.fill();
+    c.fillStyle=col;c.fillRect(7,-11,6,7);c.beginPath();c.moveTo(8,-10);c.lineTo(-4,-20);c.lineTo(-1,-22);c.lineTo(11,-11);c.closePath();c.fill();
+    c.fillStyle="#ff9f1c";c.beginPath();c.ellipse(-21,-7,4,2.5,0,0,7);c.fill();
+    c.fillStyle="#374151";c.beginPath();c.ellipse(-4,-15,7,3,-.4,0,7);c.fill();
+  }else if(vehicle==="skate"){
+    c.fillStyle=col;rr(c,-20,-8,40,5,2.5);c.fill();c.shadowColor="transparent";
+    c.fillStyle="#1f2937";[-13,13].forEach(w=>{c.beginPath();c.arc(w,-2,3.5,0,7);c.fill()});
+    c.strokeStyle="#1f2937";c.lineWidth=3;c.lineCap="round";c.beginPath();c.moveTo(-8,-8);c.lineTo(-3,-18);c.lineTo(6,-8);c.stroke();
+    c.strokeStyle=col;c.lineWidth=5;c.beginPath();c.moveTo(-2,-18);c.lineTo(1,-30);c.stroke();
+    c.strokeStyle="#1f2937";c.lineWidth=2.5;c.beginPath();c.moveTo(0,-27);c.lineTo(-10,-22);c.moveTo(0,-27);c.lineTo(10,-29);c.stroke();
+    c.fillStyle="#fcd9b6";c.beginPath();c.arc(2,-36,5,0,7);c.fill();
+    c.fillStyle=lt;c.beginPath();c.arc(2,-37,5.6,Math.PI,0);c.fill();
+  }else if(vehicle==="rocket"){
+    const sp=Math.abs(sim.u),fl=Math.min(30,4+sp*1.1)*(0.8+0.4*Math.random());
+    if(sp>0.2){const fg=c.createLinearGradient(-18,0,-18-fl,0);fg.addColorStop(0,"#fff3b0");fg.addColorStop(.4,"#ffb000");fg.addColorStop(1,"rgba(255,59,0,0)");
+      c.fillStyle=fg;c.beginPath();c.moveTo(-18,-16);c.quadraticCurveTo(-18-fl,-11,-18,-6);c.closePath();c.fill()}
+    const gr=c.createLinearGradient(0,-20,0,-2);gr.addColorStop(0,lt);gr.addColorStop(1,col);
+    c.fillStyle=gr;c.beginPath();c.moveTo(-18,-17);c.lineTo(10,-17);c.quadraticCurveTo(24,-11,10,-5);c.lineTo(-18,-5);c.closePath();c.fill();c.shadowColor="transparent";
+    c.fillStyle="#e2e8f0";c.beginPath();c.moveTo(10,-17);c.quadraticCurveTo(24,-11,10,-5);c.closePath();c.fill();
+    c.fillStyle="#bae6fd";c.strokeStyle="#334155";c.lineWidth=1.5;c.beginPath();c.arc(0,-11,3.6,0,7);c.fill();c.stroke();
+    c.fillStyle=dk;c.beginPath();c.moveTo(-18,-17);c.lineTo(-24,-23);c.lineTo(-12,-17);c.closePath();c.fill();c.beginPath();c.moveTo(-18,-5);c.lineTo(-24,1);c.lineTo(-12,-5);c.closePath();c.fill();
+    c.fillStyle="#475569";c.fillRect(-10,-4,20,3);
+  }else if(vehicle==="mine"){
+    c.fillStyle="#fbbf24";[[-8,-20,5],[0,-22,6],[8,-20,5],[-3,-24,4]].forEach(([a,b2,r])=>{c.beginPath();c.arc(a,b2,r,0,7);c.fill()});
+    c.shadowColor="transparent";c.fillStyle="#fff7c2";c.beginPath();c.arc(-1,-24,1.6,0,7);c.fill();
+    const gr=c.createLinearGradient(0,-20,0,-4);gr.addColorStop(0,lt);gr.addColorStop(1,dk);
+    c.fillStyle=gr;c.beginPath();c.moveTo(-18,-19);c.lineTo(18,-19);c.lineTo(14,-5);c.lineTo(-14,-5);c.closePath();c.fill();
+    c.strokeStyle="#4b5563";c.lineWidth=2;c.stroke();c.beginPath();c.moveTo(-16,-13);c.lineTo(16,-13);c.stroke();
+    c.fillStyle="#374151";[-9,9].forEach(w=>{c.beginPath();c.arc(w,-3,4.5,0,7);c.fill()});c.fillStyle="#9ca3af";[-9,9].forEach(w=>{c.beginPath();c.arc(w,-3,1.8,0,7);c.fill()});
+  }else{
+    const gr=c.createLinearGradient(0,-18,0,0);gr.addColorStop(0,lt);gr.addColorStop(1,col);
+    c.fillStyle=gr;c.beginPath();c.moveTo(-18,-6);c.lineTo(-16,-16);c.lineTo(14,-16);c.lineTo(18,-6);c.closePath();c.fill();c.shadowColor="transparent";c.strokeStyle=dk;c.lineWidth=1.5;c.stroke();
+    c.strokeStyle="#334155";c.lineWidth=2.5;c.lineCap="round";c.beginPath();c.moveTo(-20,-1);c.lineTo(16,-1);c.quadraticCurveTo(24,-1,24,-9);c.stroke();
+    c.beginPath();c.moveTo(-10,-6);c.lineTo(-10,-1);c.moveTo(8,-6);c.lineTo(8,-1);c.stroke();
+    c.fillStyle="#2b2b2b";c.beginPath();c.arc(-2,-22,5,0,7);c.fill();
+  }
+  c.restore();
+}
+function drawGauge(v){
+  const c=gx; c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,gw,gh);
+  const vmax=Math.max(10,Math.ceil(Math.sqrt(E2()+2*g*0)/5)*5);
+  const R=Math.min(gw/2-14,(gh-16)/1.62), cxg=gw/2, cyg=R+12;
+  const a0=Math.PI*0.85,a1=Math.PI*2.15, A=x=>a0+(a1-a0)*Math.min(1,x/vmax);
+  c.lineCap="round";c.lineWidth=10;c.strokeStyle=C.grid2;c.beginPath();c.arc(cxg,cyg,R,a0,a1);c.stroke();
+  const segs=48,aV=A(v);for(let i=0;i<segs;i++){const s0=a0+(a1-a0)*i/segs,s1=a0+(a1-a0)*(i+1)/segs;if(s0>=aV)break;c.strokeStyle=`hsl(${150-150*i/segs},80%,45%)`;c.beginPath();c.arc(cxg,cyg,R,s0,Math.min(s1+.01,aV));c.stroke()}c.lineCap="butt";
+  const step=vmax<=20?2:5;
+  c.font=`600 10px ${FM()}`;c.textAlign="center";c.textBaseline="middle";
+  for(let x=0;x<=vmax+1e-9;x+=step/2){
+    const a=A(x),maj=Math.abs(x/step-Math.round(x/step))<1e-6;
+    c.strokeStyle=C.ink;c.lineWidth=maj?2:1;c.beginPath();
+    c.moveTo(cxg+Math.cos(a)*(R-9),cyg+Math.sin(a)*(R-9));c.lineTo(cxg+Math.cos(a)*(R-(maj?20:15)),cyg+Math.sin(a)*(R-(maj?20:15)));c.stroke();
+    if(maj&&R>60){c.fillStyle=C.muted;c.fillText(x,cxg+Math.cos(a)*(R-31),cyg+Math.sin(a)*(R-31))}
+  }
+  const a=A(v);c.strokeStyle=C.warn;c.lineWidth=3;c.beginPath();c.moveTo(cxg,cyg);c.lineTo(cxg+Math.cos(a)*(R-14),cyg+Math.sin(a)*(R-14));c.stroke();
+  c.fillStyle=C.ink;c.beginPath();c.arc(cxg,cyg,6,0,7);c.fill();
+  c.font=`600 ${R>70?26:20}px ${FM()}`;c.fillStyle=C.ink;c.textBaseline="alphabetic";c.fillText(EXAM?"--.--":v.toFixed(2),cxg,cyg+R*0.5);
+  c.font=`11px ${FM()}`;c.fillStyle=C.muted;c.fillText("m/s",cxg,cyg+R*0.5+15);
+}
+
+function drawEgraph(){
+  const c=ex; c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,ew,eh);
+  const L=W<480?40:68, Rr=18,T=12,Bt=26, me=ME(), emax=Math.max(me,m*g*Math.max(...P.y)*B)*1.08||1;
+  const X=x=>L+x/XMAX*(ew-L-Rr), Y=e=>eh-Bt-e/emax*(eh-T-Bt);
+  c.fillStyle=C.panel2;c.fillRect(L,T,ew-L-Rr,eh-T-Bt);
+  c.font=`10px ${FM()}`;c.fillStyle=C.muted;c.textAlign="right";c.textBaseline="middle";
+  const st=niceStep(emax/4);
+  for(let e=0;e<=emax;e+=st){c.strokeStyle=C.grid2;c.lineWidth=1;c.beginPath();c.moveTo(L,Math.round(Y(e))+.5);c.lineTo(ew-Rr,Math.round(Y(e))+.5);c.stroke();c.fillText(fmtJ(e),L-6,Y(e))}
+  c.textAlign="center";c.textBaseline="top";for(let x=0;x<=XMAX;x+=2)c.fillText((x*B).toFixed(0),X(x),eh-Bt+6);
+  const {X:xs,Y:ys,N}=samples;
+  // forbidden region where PE > ME
+  c.fillStyle="rgba(194,65,12,.13)";
+  for(let i=0;i<N;i+=3){if(m*g*ys[i]*B>me+1e-6)c.fillRect(X(xs[i])-1,T,2.5,eh-T-Bt)}
+  const line=(f,col,w)=>{c.strokeStyle=col;c.lineWidth=w;c.beginPath();for(let i=0;i<N;i+=3){const px=X(xs[i]),py=Y(Math.max(0,f(ys[i])));i?c.lineTo(px,py):c.moveTo(px,py)}c.stroke()};
+  line(y=>m*g*y*B,C.pe,2.2); line(y=>me-m*g*y*B,C.ke,2.2);
+  c.strokeStyle=C.me;c.lineWidth=2.2;c.beginPath();c.moveTo(X(xs[0]),Y(me));c.lineTo(X(xs[N-1]),Y(me));c.stroke();
+  const p=atS(sim.s);c.strokeStyle=C.cart;c.lineWidth=1.5;c.setLineDash([4,3]);c.beginPath();c.moveTo(X(p.x),T);c.lineTo(X(p.x),eh-Bt);c.stroke();c.setLineDash([]);
+  [[m*g*p.y*B,C.pe],[me-m*g*p.y*B,C.ke],[me,C.me]].forEach(([e,col])=>{c.fillStyle=col;c.beginPath();c.arc(X(p.x),Y(Math.max(0,e)),4.5,0,7);c.fill()});
+  c.textAlign="left";c.textBaseline="top";c.fillStyle=C.muted;c.fillText("energy (J) vs x (m)",L+6,T+4);
+}
+function niceStep(r){const p=Math.pow(10,Math.floor(Math.log10(r))),f=r/p;return (f<1.5?1:f<3?2:f<7?5:10)*p}
+function fmtJ(e){return Math.round(e).toLocaleString("en-US")}
+const f2=v=>isNaN(v)?"—":v.toFixed(2), fJ=v=>isNaN(v)?"—":Math.round(v).toLocaleString("en-US");
+
+/* ---------- panels ---------- */
+let pgSig="";
+function renderGates(){if(!$("pgOut"))return;
+  const sig=JSON.stringify([gateInfo.map(g=>g.last&&g.last.dt),t12&&t12.dt,LF,gates.map(g=>g.x.toFixed(2)),B]);
+  if(sig===pgSig)return;pgSig=sig;
+  let html="";
+  gates.forEach((gt,j)=>{const li=gateInfo[j].last,h=yAtX(gt.x)*B;
+    html+=`<div class="pgcard"><div class="pghead"><span>PG${j+1}</span><span class="pgtag" style="background:${GCOL[j]}">x = ${(gt.x*B).toFixed(2)} m · h = ${h.toFixed(2)} m</span></div>
+    <div class="lcd"><span>${li?li.dt.toFixed(4):"-.----"}</span><small>Δt (s)${li?" "+li.dir:""}</small></div>
+    <div class="check"><label class="ctl" for="ans${j}">Your v (m/s)</label><input type="number" id="ans${j}" step="0.01" placeholder="L/Δt"><button type="button" data-chk="${j}">Check</button><span class="verdict" id="vd${j}"></span></div></div>`});
+  html+=`<div class="pgcard"><div class="pghead"><span>PG1 → PG2</span><span class="pgtag" style="background:var(--me)">track distance ${t12?t12.d.toFixed(2):(Math.abs(gateS(gates[1])-gateS(gates[0]))).toFixed(2)} m</span></div>
+    <div class="lcd"><span>${t12?t12.dt.toFixed(4):"-.----"}</span><small>travel time (s)</small></div>
+    <div class="pgmeta">Average speed between gates = distance ÷ time</div></div>`;
+  const keep=[0,1].map(j=>{const el=$("ans"+j);return el?el.value:""});
+  $("pgOut").innerHTML=html;[0,1].forEach(j=>$("ans"+j).value=keep[j]);
+}
+$q("pgOut")?.addEventListener("click",e=>{const b=e.target.closest("[data-chk]");if(!b)return;const j=+b.dataset.chk,li=gateInfo[j].last,vd=$("vd"+j);
+  if(!li){vd.textContent="Run the cart through the gate first.";vd.style.color="var(--muted)";return}
+  const ans=parseFloat($("ans"+j).value),vt=LF/li.dt;
+  if(!isFinite(ans)){vd.textContent="Enter a number.";vd.style.color="var(--muted)";return}
+  const err=Math.abs(ans-vt)/vt*100;
+  if(err<=2){vd.textContent=`✓ Correct (${vt.toFixed(2)} m/s)`;vd.style.color="var(--ok)"}else{vd.textContent=`✗ Off by ${err.toFixed(0)} %. Try again.`;vd.style.color="var(--warn)"}});
+function updatePanels(){
+  renderGates();
+  const p=atS(sim.s), sp=Math.abs(sim.u), PE=m*g*p.y*B, KE=0.5*m*sp*sp, me=ME();
+  const top=Math.max(me,1);
+  $("fPE").style.height=Math.min(100,PE/top*100)+"%";$("fKE").style.height=Math.min(100,KE/top*100)+"%";$("fME").style.height="100%";
+  if(!EXAM){$("vPE").textContent=fJ(PE);$("vKE").textContent=fJ(KE);$("vME").textContent=fJ(PE+KE);}else{$("vPE").textContent=$("vKE").textContent=$("vME").textContent="—"}
+  const pp=Math.max(0,Math.min(100,PE/top*100));$("sPE").style.width=pp+"%";$("sKE").style.width=(100-pp)+"%";$("lPE").textContent=`PE ${pp.toFixed(0)}%`;$("lKE").textContent=`KE ${(100-pp).toFixed(0)}%`;
+  $("chipM").textContent=`m = ${m.toFixed(1)} kg`;$("chipB").textContent=`1 block = ${B.toFixed(2)} m`;$("chipG").textContent=`g = ${g.toFixed(2)} m/s²`;
+  $("meBadge").textContent=`Frictionless · ME conserved · drift ${sim.maxDrift.toFixed(3)} %`;
+  // nearest point
+  let near=-1;for(let k=0;k<8;k++)if(Math.abs(p.x-P.x[k])<0.12)near=k;
+  $("status").textContent=`${sim.running?"Running":"Paused"} · t = ${sim.t.toFixed(2)} s · x = ${(p.x*B).toFixed(1)} m${near>=0?" · at "+LET[near]:""}`;
+  [...$("ptBody").children].forEach((tr,i)=>tr.classList.toggle("here",i===near));
+  drawGauge(sp);
+  // probe
+  const hy=yAtX(probeX)*B, v=vAtH(hy), pke=isNaN(v)?NaN:0.5*m*v*v, ppe=m*g*hy;
+  $("probeOut").innerHTML=`<dt>Position x</dt><dd>${(probeX*B).toFixed(2)} m</dd><dt>Height h</dt><dd>${hy.toFixed(2)} m</dd><dt>Height (blocks)</dt><dd>${(hy/B).toFixed(2)}</dd><dt>P.E = mgh</dt><dd>${fJ(ppe)} J</dd>`;
+}
+let t1={shown:false,checked:false};
+function t1Vals(k){const h=P.y[k]*B,PE=m*g*h,me=ME(),KE=me-PE;return {h,PE,KE,v:KE>=0?Math.sqrt(2*KE/m):NaN}}
+function updateTable(){
+  const keep={};document.querySelectorAll(".t1 input").forEach(el=>keep[el.id]=el.value);
+  $("t1ME").textContent=`${fJ(ME())} J`;
+  $("t1Facts").innerHTML=`<span>m = ${m.toFixed(1)} kg</span><span>g = ${g.toFixed(2)} m/s²</span><span>1 block = ${B.toFixed(2)} m</span>`;
+  let html="";
+  for(let k=0;k<8;k++){const R=t1Vals(k);
+    const inp=(key,txt)=>`<td><input type="number" step="any" id="t1${key}${k}" aria-label="${LET[k]} ${key}">${t1.shown?`<span class="sol">${txt}</span>`:""}</td>`;
+    html+=`<tr><td class="pt">${LET[k]}</td><td>${P.y[k].toFixed(2)}</td><td>${R.h.toFixed(2)}</td><td class="me">${fJ(ME())}</td>${inp("PE",fJ(R.PE))}${inp("KE",fJ(R.KE))}${inp("v",isNaN(R.v)?"not reached":R.v.toFixed(2))}</tr>`;
+  }
+  $("ptBody").innerHTML=html;
+  Object.entries(keep).forEach(([id,v])=>{const el=$(id);if(el)el.value=v});
+  if(t1.checked)checkT1(true);
+  updateWork();
+}
+function checkT1(silent){let ok=0,tot=0;
+  for(let k=0;k<8;k++){const R=t1Vals(k);["PE","KE","v"].forEach(key=>{tot++;const el=$(`t1${key}${k}`),a=parseFloat(el.value);el.classList.remove("ok","bad");if(!isFinite(a))return;
+    const good=Math.abs(a-R[key])<=Math.max(0.02*Math.abs(R[key]),key==="v"?0.05:5);el.classList.add(good?"ok":"bad");if(good)ok++})}
+  t1.checked=true;$("t1Score").textContent=`Score ${ok} / ${tot}`;if(!silent&&ok===tot)toast("Table complete! ME = PE + KE at every point.")}
+function updateWork(){
+  const a=+$("wFrom").value,b=+$("wTo").value,ha=P.y[a]*B,hb=P.y[b]*B,W=m*g*(ha-hb);
+  const sign=W>0?'<span class="pos">positive</span>':W<0?'<span class="neg">negative</span>':"zero";
+  $("wOut").innerHTML=`W<sub>g</sub> = mg(h<sub>${LET[a]}</sub> − h<sub>${LET[b]}</sub>)<br>= ${m.toFixed(1)} × ${g.toFixed(2)} × (${ha.toFixed(2)} − ${hb.toFixed(2)})<br>= <b>${fJ(W)} J</b> · ${sign}<br><span style="color:var(--muted)">ΔKE<sub>${LET[a]}→${LET[b]}</sub> = ${fJ(W)} J (work–energy theorem)</span>`;
+}
+let chal={rows:[],shown:false,checked:false};
+function newChallenge(){
+  const xs=[];let tries=0;
+  while(xs.length<5&&tries<500){tries++;const x=P.x[0]+0.4+Math.random()*(P.x[7]-P.x[0]-0.8);const h=yAtX(x)*B;if(isNaN(vAtH(h))||vAtH(h)<1)continue;if(xs.some(o=>Math.abs(o-x)<1.1))continue;if(P.x.some(px=>Math.abs(px-x)<0.35))continue;xs.push(x)}
+  xs.sort((a,b)=>a-b);
+  const kinds=["h","h","h","v","v"].sort(()=>Math.random()-.5);
+  const ms=[5,8,10,12,15,20,25,30,40,50].sort(()=>Math.random()-.5);
+  chal={rows:xs.map((x,i)=>({x,given:kinds[i],found:false,m:ms[i]})),shown:false,checked:false};
+  buildChal();render();
+}
+function rowVals(r){const m=r.m;const h=+(yAtX(r.x)*B).toFixed(2),v=+vAtH(h).toFixed(2);
+  if(r.given==="h"){return {h,v:Math.sqrt(Math.max(0,E2()-2*g*h)),KE:0.5*m*(E2()-2*g*h),PE:m*g*h,ME:m*g*hA()+0.5*m*v0*v0}}
+  const hh=(E2()-v*v)/(2*g);return {h:hh,v,KE:0.5*m*v*v,PE:m*g*hh,ME:m*g*hA()+0.5*m*v0*v0};}
+function buildChal(){
+  const keep={};document.querySelectorAll(".ctab input").forEach(el=>keep[el.id]=el.value);
+  $("chBody").innerHTML=chal.rows.map((r,i)=>{const R=rowVals(r);
+    const cell=(k,dp)=>{if(r.given===k)return `<td class="given">${R[k].toFixed(dp)}<small>given</small></td>`;
+      return `<td><input type="number" step="any" id="c${i}${k}" aria-label="P${i+1} ${k}">${chal.shown?`<span class="sol">${k==="h"||k==="v"?R[k].toFixed(2):fJ(R[k])}</span>`:""}</td>`};
+    return `<tr><td class="pt">P${i+1}${r.given==="v"?"<small>find the spot</small>":""}</td><td class="given">${r.m.toFixed(1)}<small>given</small></td>${cell("h",2)}${cell("v",2)}${cell("KE",0)}${cell("PE",0)}${cell("ME",0)}</tr>`}).join("");
+  Object.entries(keep).forEach(([id,v])=>{const el=$(id);if(el)el.value=v});
+  if(chal.checked)checkChal(true);
+}
+function checkChal(silent){
+  let ok=0,tot=0;
+  chal.rows.forEach((r,i)=>{const R=rowVals(r);let rowOk=true;
+    ["h","v","KE","PE","ME"].forEach(k=>{if(r.given===k)return;tot++;const el=$(`c${i}${k}`),a=parseFloat(el.value);el.classList.remove("ok","bad");
+      if(!isFinite(a)){rowOk=false;return}
+      const good=Math.abs(a-R[k])<=Math.max(0.02*Math.abs(R[k]),k==="h"||k==="v"?0.05:5);
+      el.classList.add(good?"ok":"bad");if(good)ok++;else rowOk=false;
+      if(k==="h"&&good)r.found=true;});
+  });
+  chal.checked=true;$("chScore").textContent=`Score ${ok} / ${tot}`;
+  if(!silent){if(ok===tot)toast("Perfect! Every value conserves ME.");render()}
+}
+$q("btnChk")?.addEventListener("click",()=>checkChal(false));
+$q("btnNew")?.addEventListener("click",()=>{$("chBody").innerHTML="";$("chScore").textContent="Score — / —";newChallenge()});
+$q("btnShow")?.addEventListener("click",()=>{chal.shown=!chal.shown;chal.rows.forEach(r=>{if(chal.shown)r.found=true});$("btnShow").textContent=chal.shown?"Hide solutions":"Show solutions";buildChal();render()});
+$q("chkLock")?.addEventListener("change",render);
+const locked=()=>true;
+let log=[];
+function renderLog(){
+  if(!log.length){$("logBody").innerHTML='<tr><td colspan="7" style="text-align:left;font-family:var(--f-body);color:var(--muted)">Move the probe and press Record to log a reading.</td></tr>';return}
+  $("logBody").innerHTML=log.map((r,i)=>`<tr><td>${i+1}</td><td>${r.x.toFixed(2)}</td><td>${r.h.toFixed(2)}</td><td>${f2(r.v)}</td><td>${fJ(r.ke)}</td><td>${fJ(r.pe)}</td><td>${isNaN(r.v)?"—":fJ(r.ke+r.pe)}</td></tr>`).join("");
+}
+
+/* ---------- interaction ---------- */
+let drag=null;
+function pos(e){const r=cv.getBoundingClientRect();return {px:e.clientX-r.left,py:e.clientY-r.top}}
+function snapv(v){return snap?Math.round(v/snap)*snap:Math.round(v*100)/100}
+cv.addEventListener("pointerdown",e=>{
+  const {px,py}=pos(e), rr=W<480?18:20;
+  for(let k=0;k<8;k++)if(Math.hypot(px-sx(P.x[k]),py-sy(P.y[k]))<rr){drag={k};break}
+  if(!drag)gates.forEach((gt,j)=>{if(!drag&&Math.abs(px-sx(gt.x))<24&&py>sy(yAtX(gt.x))-74&&py<sy(yAtX(gt.x))-44)drag={gate:j}});
+  if(!drag&&!EXAM&&Math.hypot(px-sx(probeX),py-sy(yAtX(probeX)))<16)drag={probe:1};
+  if(!drag&&px<M.l+4&&Math.abs(py-sy(level))<14)drag={level:1};
+  if(!drag&&!EXAM){const wxp=wx(px);if(wxp>=P.x[0]&&wxp<=P.x[7]&&Math.abs(py-sy(yAtX(wxp)))<30){probeX=wxp;drag={probe:1};render()}}
+  if(!drag&&Math.abs(py-sy(level))<6)drag={level:1};
+  if(drag){cv.setPointerCapture(e.pointerId);e.preventDefault();if(drag.k!==undefined){sim.running=false;$("btnRun").textContent="Start"}}
+});
+cv.addEventListener("pointermove",e=>{
+  const {px,py}=pos(e);
+  if(!drag){
+    let over=false;for(let k=0;k<8;k++)if(Math.hypot(px-sx(P.x[k]),py-sy(P.y[k]))<20)over=true;
+    gates.forEach(gt=>{if(Math.abs(px-sx(gt.x))<24&&py>sy(yAtX(gt.x))-74&&py<sy(yAtX(gt.x))-44)over=true});
+    if(Math.hypot(px-sx(probeX),py-sy(yAtX(probeX)))<16||Math.abs(py-sy(level))<6)over=true;
+    const wxp=wx(px);let hv=null;if(wxp>=P.x[0]&&wxp<=P.x[7]&&Math.abs(py-sy(yAtX(wxp)))<40)hv=wxp;
+    if(hv!==hoverX){hoverX=hv;if(!sim.running)render()}
+    cv.style.cursor=over?"grab":hv!==null?"pointer":"crosshair";return;
+  }
+  cv.style.cursor="grabbing";
+  if(drag.k!==undefined){
+    const k=drag.k, lo=k?P.x[k-1]+0.5:0.25, hi=k<7?P.x[k+1]-0.5:XMAX-0.25;
+    P.x[k]=Math.max(lo,Math.min(hi,snapv(wx(px))));
+    P.y[k]=Math.max(0,Math.min(9,snapv(wy(py))));
+    rebuild(true);
+  }else if(drag.probe){probeX=Math.max(P.x[0],Math.min(P.x[7],wx(px)));}
+  else if(drag.gate!==undefined){gates[drag.gate].x=Math.max(P.x[0]+0.2,Math.min(P.x[7]-0.2,snap?snapv(wx(px)):wx(px)));gateInfo[drag.gate]={};cross=[null,null];t12=null;}
+  else if(drag.level){level=Math.max(0,Math.min(9,snap?snapv(wy(py)):wy(py)));}
+  render();
+});
+const end=()=>{drag=null;render()};
+cv.addEventListener("pointerup",end);cv.addEventListener("pointerleave",()=>{if(hoverX!==null){hoverX=null;render()}});cv.addEventListener("pointercancel",end);
+
+function rebuild(resetCart){build();if(chal.rows.length)setTimeout(buildChal,0);gates.forEach(gt=>gt.x=Math.max(P.x[0]+0.2,Math.min(P.x[7]-0.2,gt.x)));probeX=Math.max(P.x[0],Math.min(P.x[7],probeX));if(resetCart)resetSim();updateTable()}
+function readParams(){
+  const r=(id,d)=>{const v=parseFloat($(id).value);return isFinite(v)&&v>0?v:d};
+  m=r("inM",15);B=r("inBlock",4.5);g=r("inG",9.8);const vv=parseFloat($("inV0").value);v0=isFinite(vv)&&vv>=0?vv:0;
+  rebuild(true);render();
+}
+["inM","inBlock","inG","inV0"].forEach(id=>$(id).addEventListener("input",readParams));
+$("selPreset").addEventListener("change",e=>{P=clone(PRESETS[e.target.value]);rebuild(true);newChallenge()});
+$("selSnap").addEventListener("change",e=>snap=+e.target.value);
+$("selRate").addEventListener("change",e=>rate=+e.target.value);
+$("swatches").innerHTML=COLORS.map((col,i)=>`<button class="swatch" id="sw${i}" style="background:${col}" aria-label="Colour ${i+1}" aria-pressed="${i===0}"></button>`).join("");
+$("swatches").addEventListener("click",e=>{const b=e.target.closest(".swatch");if(!b)return;cartColor=b.style.background&&COLORS[+b.id.slice(2)];[...$("swatches").children].forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+$("segVeh").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;vehicle=b.dataset.veh;[...$("segVeh").children].forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+$("chkTrail").addEventListener("change",e=>{showTrail=e.target.checked;render()});
+$("chkVec").addEventListener("change",e=>{showVec=e.target.checked;render()});
+$("btnT1Chk").addEventListener("click",()=>checkT1(false));
+$("btnT1Show").addEventListener("click",()=>{t1.shown=!t1.shown;$("btnT1Show").textContent=t1.shown?"Hide solutions":"Show solutions";updateTable()});
+$("btnT1Clr").addEventListener("click",()=>{document.querySelectorAll(".t1 input").forEach(el=>{el.value="";el.classList.remove("ok","bad")});t1.checked=false;$("t1Score").textContent="Score — / —"});
+$("btnRun").addEventListener("click",()=>{sim.running=!sim.running;$("btnRun").textContent=sim.running?"Pause":"Start";last=performance.now()});
+$("btnStep").addEventListener("click",()=>{sim.running=false;$("btnRun").textContent="Start";advance(0.1);render()});
+$("btnReset").addEventListener("click",()=>{resetSim();render()});
+$q("btnGateClr")?.addEventListener("click",()=>{gateInfo=[{},{}];cross=[null,null];t12=null;pgSig="";render()});
+$q("inFlag")?.addEventListener("input",e=>{const v=parseFloat(e.target.value);if(isFinite(v)&&v>0){LF=v;gateInfo=[{},{}];t12=null;render()}});
+$q("btnRec")?.addEventListener("click",()=>{const h=yAtX(probeX)*B,v=vAtH(h);log.push({x:probeX*B,h,v,ke:isNaN(v)?NaN:0.5*m*v*v,pe:m*g*h});renderLog()});
+$q("btnClear")?.addEventListener("click",()=>{log=[];renderLog()});
+const opts=LET.split("").map((l,i)=>`<option value="${i}">${l}</option>`).join("");
+$("wFrom").innerHTML=opts;$("wTo").innerHTML=opts;$("wFrom").value="2";$("wTo").value="5";
+$("wFrom").addEventListener("change",updateWork);$("wTo").addEventListener("change",updateWork);
+
+function render(){if(cv.clientWidth<60||gv.clientWidth<60)return;readColors();drawTrack();drawEgraph();updatePanels()}
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(sim.running){advance(dt*rate);render()}
+  requestAnimationFrame(loop);
+}
+const ro=new ResizeObserver(()=>{size();render()});
+build();resetSim();updateTable();size();
+ro.observe(document.querySelector('.wrap'));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+if(document.fonts)document.fonts.ready.then(render);
+newChallenge();
+if(EXAM){document.querySelector(".grid2").hidden=true;
+  const mm=location.hash.match(/m(\d+(?:\.\d+)?)/),bb=location.hash.match(/-b(\d+(?:\.\d+)?)/);if(bb){$("inBlock").value=(+bb[1]).toFixed(2);}if(bb){const f=$("inBlock"),tip=document.createElement("div");tip.id="blkWarn";tip.hidden=true;
+    tip.style.cssText="margin-top:6px;padding:6px 9px;border-radius:8px;background:#e8f7ee;border:1px solid #7cc79a;color:#14532d;font-size:12.5px;font-weight:600;line-height:1.35";
+    f.closest("label").after(tip);
+    const target=window.parent!==window?window.parent:window.opener;
+    let t0=0;f.addEventListener("input",()=>{const v=parseFloat(f.value);if(!isFinite(v)||v<0.1)return;clearTimeout(t0);t0=setTimeout(()=>{
+      try{if(target)target.postMessage({type:"phys111-expt7-block",b:Math.round(v*100)/100},"*");}catch(e){}
+},350);});
+    window.addEventListener("message",e=>{const d=e.data;if(!d||d.type!=="phys111-expt7-block-ack")return;tip.hidden=false;
+      if(d.locked){tip.style.background="#fff4e0";tip.style.borderColor="#f0b54a";tip.style.color="#6b4300";tip.innerHTML=`Your report is already submitted and still uses <b>${(+d.b).toFixed(2)} m</b> per block.`;}
+      else{tip.style.background="#e8f7ee";tip.style.borderColor="#7cc79a";tip.style.color="#14532d";tip.innerHTML=`Report updated: it now uses <b>${(+d.b).toFixed(2)} m</b> per block.`;}});}
+  
+if(mm){const fm=$("inM"),tm=document.createElement("div");tm.id="massWarn";tm.hidden=true;
+    tm.style.cssText="margin-top:6px;padding:6px 9px;border-radius:8px;background:#e8f7ee;border:1px solid #7cc79a;color:#14532d;font-size:12.5px;font-weight:600;line-height:1.35";
+    fm.closest("label").after(tm);
+    const tgt=window.parent!==window?window.parent:window.opener;
+    let t1=0;fm.addEventListener("input",()=>{const v=parseFloat(fm.value);if(!isFinite(v)||v<0.1)return;clearTimeout(t1);t1=setTimeout(()=>{
+      try{if(tgt)tgt.postMessage({type:"phys111-expt7-mass",m:Math.round(v*10)/10},"*");}catch(e){}},350);});
+    window.addEventListener("message",e=>{const d=e.data;if(!d||d.type!=="phys111-expt7-mass-ack")return;tm.hidden=false;
+      if(d.locked){tm.style.background="#fff4e0";tm.style.borderColor="#f0b54a";tm.style.color="#6b4300";tm.innerHTML=`Your report is already submitted and still uses <b>${(+d.m).toFixed(1)} kg</b>.`;}
+      else{tm.style.background="#e8f7ee";tm.style.borderColor="#7cc79a";tm.style.color="#14532d";tm.innerHTML=`Report updated: it now uses <b>${(+d.m).toFixed(1)} kg</b>.`;}});}
+{ // ---- track: restore the saved shape, keep every point reachable, and send changes to the report
+    const ty=location.hash.match(/-ty([0-9._]+)/),tx=location.hash.match(/-tx([0-9._]+)/);
+    if(ty){const ys=ty[1].split("_").map(Number);if(ys.length===8&&ys.every(isFinite))P.y=ys;}
+    if(tx){const xs=tx[1].split("_").map(Number);if(xs.length===8&&xs.every(isFinite))P.x=xs;}
+    const opt=document.querySelector('#selPreset option[value="tall"]');if(opt){opt.disabled=true;opt.textContent+=" (not used in the report)";}
+    // A (start) and H (end) move freely. B-G stay below A so the cart reaches every measured point:
+    // lowering A pushes them down with it. H may go above A (the cart then turns back before H).
+    const clampTrack=()=>{P.y[0]=Math.max(1,P.y[0]);
+      for(let j=1;j<7;j++)P.y[j]=Math.min(P.y[j],P.y[0]-0.5);
+      P.y=P.y.map(v=>Math.max(0,Math.min(9,Math.round(v*100)/100)));};
+    const tgt=window.parent!==window?window.parent:window.opener;
+    const note=document.createElement("div");note.id="trackNote";note.hidden=true;
+    note.style.cssText="margin:8px 0 0;padding:6px 9px;border-radius:8px;background:#e8f7ee;border:1px solid #7cc79a;color:#14532d;font-size:12.5px;font-weight:600;line-height:1.35";
+    const hint=document.querySelector(".hint");if(hint)hint.after(note);
+    let tt=0,last="";const send=()=>{clearTimeout(tt);tt=setTimeout(()=>{const key=P.y.join("_")+"|"+P.x.join("_");if(key===last)return;last=key;
+      try{if(tgt)tgt.postMessage({type:"phys111-expt7-track",y:P.y.slice(),x:P.x.map(v=>Math.round(v*100)/100)},"*");}catch(e){}},400);};
+    const _rebuild=rebuild;rebuild=function(r){clampTrack();_rebuild(r);send();};
+    window.addEventListener("message",e=>{const d=e.data;if(!d||d.type!=="phys111-expt7-track-ack")return;note.hidden=false;
+      const txt=d.y.map((v,k)=>"ABCDEFGH"[k]+" "+(+v)).join(", ");
+      if(d.locked){note.style.background="#fff4e0";note.style.borderColor="#f0b54a";note.style.color="#6b4300";note.innerHTML=`Your report is already submitted and still uses the track ${txt} blocks.`;}
+      else{note.style.background="#e8f7ee";note.style.borderColor="#7cc79a";note.style.color="#14532d";note.innerHTML=`Report updated with your track: ${txt} blocks.`;}});
+    last=P.y.join("_")+"|"+P.x.join("_");rebuild(true);
+  }
+  if(mm||bb){if(mm)$("inM").value=(+mm[1]).toFixed(1);$("inG").disabled=true;$("inV0").disabled=true;readParams();}
+  document.querySelector("header").hidden=true;$("probeOut").closest(".panel").hidden=true;document.querySelector(".hint").innerHTML="Drag the white circles <b>A–H</b> to reshape the track. The start <b>A</b> and the end <b>H</b> move freely: try raising H above A and watch what the cart does. Load <b>Handout (Bumps)</b> to restore the track. Drag the <b>▶ level line</b> on the ruler to compare heights.";}
+render();requestAnimationFrame(loop);
+// ---- standalone virtual lab: student start screen, values bar, live "Your data" panel
+{ const wrap=document.querySelector(".wrap")||document.body, esc=(t)=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const css=document.createElement("style");css.textContent=`
+  #vlBar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 12px;padding:14px 18px;border-radius:16px;color:#fff;background:linear-gradient(115deg,#D7193D,#F07A2E);font:600 14px/1.4 system-ui,"Source Sans 3",sans-serif}
+  #vlBar .eb{font:600 11px ui-monospace,monospace;letter-spacing:.12em;opacity:.9}#vlBar h1{margin:2px 0 0;font-size:22px;font-weight:800;color:#fff}
+  #vlBar .who{background:rgba(255,255,255,.18);border-radius:12px;padding:8px 12px;font-size:13px}#vlBar .who b{font-size:15px}
+  #vlBar button{margin-left:8px;border:1px solid rgba(255,255,255,.6);background:transparent;color:#fff;border-radius:8px;padding:4px 10px;font:600 12px system-ui;cursor:pointer}
+  #vlData{margin:0 0 12px;padding:14px 16px;border-radius:16px;background:var(--panel,#fff);border:1px solid var(--line,#dfe5ee)}
+  #vlData h2{margin:0 0 8px;font-size:16px}#vlData .vals{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  #vlData .vals div{border-radius:12px;padding:8px 14px;background:linear-gradient(120deg,#6d4bd6,#4a62d8);color:#fff}#vlData .vals small{display:block;font:600 10.5px ui-monospace,monospace;letter-spacing:.1em;opacity:.9;text-transform:uppercase}#vlData .vals b{font-size:20px}
+  #vlData .pts{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}#vlData .pts div{text-align:center;border:1px solid var(--line,#dfe5ee);border-radius:10px;padding:6px 2px}#vlData .pts b{display:block;font-size:15px}#vlData .pts span{font:12px ui-monospace,monospace;color:var(--muted,#5b6677)}
+  #vlData p{margin:8px 0 0;font-size:13px;color:var(--muted,#5b6677)}
+  @media (max-width:640px){#vlData .pts{grid-template-columns:repeat(4,1fr)}}
+  #vlStart{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:linear-gradient(135deg,#3a0d18 0%,#7a1a2c 45%,#b4462a 100%);padding:16px}
+  #vlStart .card{width:min(460px,100%);background:#fff;color:#121a29;border-radius:18px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);font:15px/1.45 system-ui,"Source Sans 3",sans-serif}
+  #vlStart h2{margin:0 0 4px;font-size:21px}#vlStart label{display:block;margin:12px 0 4px;font-weight:600;font-size:13px}
+  #vlStart input{width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #cfd7e2;border-radius:10px;font:inherit}
+  #vlStart button{margin-top:16px;width:100%;padding:11px;border:0;border-radius:10px;background:#D7193D;color:#fff;font:700 15px system-ui;cursor:pointer}
+  #vlStart .err{color:#b42318;font-size:13px;min-height:18px;margin-top:6px}
+  @media print{#vlStart{display:none}}`;document.head.appendChild(css);
+  if(!SV||!SV.id){ // start screen
+    const st=document.createElement("div");st.id="vlStart";
+    st.innerHTML=`<div class="card" role="dialog" aria-labelledby="vlT"><div style="font:600 11px ui-monospace,monospace;letter-spacing:.12em;color:#D7193D">PHYS 111 · LAB 8 · VIRTUAL LAB</div>
+      <h2 id="vlT">Work &amp; Energy Theorem</h2><div style="color:#5b6677;font-size:14px">Enter your details to get your personal cart mass and block height. The same student ID always gives the same values.</div>
+      <label for="vlName">Full name</label><input id="vlName" autocomplete="name">
+      <label for="vlId">Student ID</label><input id="vlId" inputmode="numeric" autocomplete="off">
+      <button type="button" id="vlGo">Start the lab</button><div class="err" id="vlErr"></div></div>`;
+    document.body.appendChild(st);
+    const go=()=>{const id=$("vlId").value.trim(),nm=$("vlName").value.trim();
+      if(!nm){$("vlErr").textContent="Enter your full name.";return;} if(id.length<4){$("vlErr").textContent="Enter your full student ID.";return;}
+      try{sessionStorage.setItem(SV_KEY,JSON.stringify({id,name:nm}));}catch(e){}
+      const v=valuesFor(id);location.hash="exam-m"+v.m+"-b"+v.b+"-ty8_5_6_0_6_5_2_8";location.reload();};
+    $("vlGo").addEventListener("click",go);["vlName","vlId"].forEach(i=>$(i).addEventListener("keydown",e=>{if(e.key==="Enter")go();}));
+    setTimeout(()=>$("vlName").focus(),50);
+  }
+  const bar=document.createElement("div");bar.id="vlBar";
+  bar.innerHTML=`<div><div class="eb">PHYS 111 · LAB 8 · VIRTUAL LAB</div><h1>Work &amp; Energy Theorem</h1></div>`+
+    (SV&&SV.id?`<div class="who">Student: <b>${esc(SV.name)}</b> · ID <b>${esc(SV.id)}</b><button type="button" id="vlSwitch">Change student</button></div>`:"");
+  wrap.insertBefore(bar,wrap.firstChild);
+  if(SV&&SV.id){
+    const v=valuesFor(SV.id);
+    ["inM","inBlock"].forEach(i=>{const f=$(i);if(f){f.disabled=true;f.title="Your personal value";}});
+    const dp=document.createElement("section");dp.id="vlData";
+    dp.innerHTML=`<h2>Your data · copy these into your report</h2>
+      <div class="vals"><div><small>Cart mass</small><b>${v.m.toFixed(1)} kg</b></div><div><small>Height of each block</small><b>${v.b.toFixed(2)} m</b></div><div><small>g</small><b>9.80 m/s²</b></div></div>
+      <div class="pts" id="vlPts"></div>
+      <p>Heights of A–H in blocks on your track. If you drag points A–H in the lab, these update: record the heights you use. The cart starts from rest at A. Speed and energy values are hidden: calculate them.</p>`;
+    bar.after(dp);
+    let last="";const upd=()=>{const k=P.y.join("_");if(k===last)return;last=k;
+      $("vlPts").innerHTML=P.y.map((y,i)=>`<div><b>${"ABCDEFGH"[i]}</b><span>${+(+y).toFixed(2)} blocks</span></div>`).join("");};
+    upd();setInterval(upd,400);
+    $("vlSwitch").addEventListener("click",()=>{try{sessionStorage.removeItem(SV_KEY);}catch(e){} location.hash="";location.reload();});
+  }
+}
+})();
+</script>
+
+</body></html>
